@@ -218,6 +218,14 @@ public abstract class Radio extends MoteInterface {
   public abstract Position getPosition();
 
   /**
+   * Returns the radio direction.
+   * This is typically the direction of the mote.
+   *
+   * @return Radio direction
+   */
+  public abstract Direction getDirection();
+
+  /**
    * This is a convenience function.
    * It returns the mote, if any, that holds this radio.
    *

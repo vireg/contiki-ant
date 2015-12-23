@@ -75,6 +75,7 @@ import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
 
+import javax.swing.JOptionPane;
 import javax.swing.AbstractAction;
 import javax.swing.Action;
 import javax.swing.JCheckBoxMenuItem;
@@ -110,6 +111,7 @@ import org.contikios.cooja.SupportedArguments;
 import org.contikios.cooja.VisPlugin;
 import org.contikios.cooja.interfaces.LED;
 import org.contikios.cooja.interfaces.Position;
+import org.contikios.cooja.interfaces.Direction;
 import org.contikios.cooja.interfaces.SerialPort;
 import org.contikios.cooja.plugins.skins.AddressVisualizerSkin;
 import org.contikios.cooja.plugins.skins.AttributeVisualizerSkin;
@@ -119,8 +121,10 @@ import org.contikios.cooja.plugins.skins.LEDVisualizerSkin;
 import org.contikios.cooja.plugins.skins.LogVisualizerSkin;
 import org.contikios.cooja.plugins.skins.MoteTypeVisualizerSkin;
 import org.contikios.cooja.plugins.skins.PositionVisualizerSkin;
+import org.contikios.cooja.plugins.skins.DirectionVisualizerSkin;
 import org.contikios.cooja.plugins.skins.TrafficVisualizerSkin;
 import org.contikios.cooja.plugins.skins.UDGMVisualizerSkin;
+import org.contikios.cooja.plugins.skins.ARMVisualizerSkin;
 
 /**
  * Simulation visualizer supporting different visualizers
@@ -203,6 +207,7 @@ public class Visualizer extends VisPlugin implements HasQuickHelp {
     registerVisualizerSkin(LEDVisualizerSkin.class);
     registerVisualizerSkin(TrafficVisualizerSkin.class);
     registerVisualizerSkin(PositionVisualizerSkin.class);
+    registerVisualizerSkin(DirectionVisualizerSkin.class);
     registerVisualizerSkin(GridVisualizerSkin.class);
     registerVisualizerSkin(MoteTypeVisualizerSkin.class);
     registerVisualizerSkin(AttributeVisualizerSkin.class);
@@ -555,6 +560,8 @@ public class Visualizer extends VisPlugin implements HasQuickHelp {
     });
 
     /* Register mote menu actions */
+    registerMoteMenuAction(SetDirectionMoteMenuAction.class);
+    registerMoteMenuAction(SelectAntennaMoteMenuAction.class);
     registerMoteMenuAction(ButtonClickMoteMenuAction.class);
     registerMoteMenuAction(ShowLEDMoteMenuAction.class);
     registerMoteMenuAction(ShowSerialMoteMenuAction.class);
@@ -1323,7 +1330,51 @@ public class Visualizer extends VisPlugin implements HasQuickHelp {
         g.drawOval(x - MOTE_RADIUS, y - MOTE_RADIUS, 2 * MOTE_RADIUS,
                    2 * MOTE_RADIUS);
       }
+
+      if (getSelectedMotes().contains(mote)) {
+	final int width = 512;
+	final int height = 512;
+	final double zoom = viewportTransform.getScaleX()*50;	//Needs to be changed with TRANSMITTING_RANGE (defined in radio medium)
+	//g.setColor(Color.black);
+	//g.fillRect(0,0,width,height);
+	g.setColor(Color.black);
+	Point last = null;
+	double orientation = 0.0;
+	orientation = mote.getInterfaces().getDirection().getOrientation()*Math.PI/180;
+	boolean omni = mote.getInterfaces().getDirection().getAntennaType();
+	final Point origin = new Point(x, y);
+	for(double t=-Math.PI;t<Math.PI;t+=0.01) {
+		double r = zoom*1.0;
+		if(!omni) r = zoom*polarFunction(t, orientation);
+		int xv = (int)Math.round(r*Math.cos(t));
+		int yv = (int)Math.round(r*Math.sin(t));
+		Point next = new Point(xv,yv);
+		if (last != null) {
+		  g.drawLine(origin.x + last.x, origin.y + last.y, origin.x + next.x, origin.y + next.y);
+		}
+		last = next;
+  	}
+      }
     }
+  }
+
+  //Draw Gain
+  public static double polarFunction(double angle, double orientation) {
+	double angleRadians = angle - orientation;
+	//double lambda = 0.125;
+	//double k = 2*Math.PI/lambda;
+	//double L = 0.5*lambda;
+	//double W = L;
+	//double a = 0.5*k*W*Math.sin(angleRadians);
+	//double y = Math.sinc(a);
+	//double gain = y*Math.cos(angleRadians);
+	double beamwidthRadians = 90*Math.PI/180;	//Use beamwidthDegrees from Direction interface instead of 90
+	double cosin = Math.cos(beamwidthRadians/4);	
+	double logan = Math.log10(cosin);
+	double exp = -3/(20*logan);
+	double gain = Math.pow(Math.cos(angleRadians),exp);
+	//double gain = Math.pow(Math.cos(angleRadians),2);	//Dipole
+	return gain;
   }
 
   private Polygon arrowPoly = new Polygon();
@@ -1651,6 +1702,46 @@ public class Visualizer extends VisPlugin implements HasQuickHelp {
         sb.append(skin.getClass().getName());
       }
       Cooja.setExternalToolsSetting("VISUALIZER_DEFAULT_SKINS", sb.toString());
+    }
+  };
+
+  protected static class SetDirectionMoteMenuAction implements MoteMenuAction {
+
+    @Override
+    public boolean isEnabled(Visualizer visualizer, Mote mote) {
+      return true;
+    }
+
+    @Override
+    public String getDescription(Visualizer visualizer, Mote mote) {
+      return "Set " + mote + " Direction";
+    }
+
+    @Override
+    public void doAction(Visualizer visualizer, Mote mote) {
+	String number = JOptionPane.showInputDialog("Enter value of Orientation in Degrees");
+	double value = Double.parseDouble(number);
+      mote.getInterfaces().getDirection().setOrientation(value);
+    }
+  };
+
+  protected static class SelectAntennaMoteMenuAction implements MoteMenuAction {
+
+    @Override
+    public boolean isEnabled(Visualizer visualizer, Mote mote) {
+      return true;
+    }
+
+    @Override
+    public String getDescription(Visualizer visualizer, Mote mote) {
+      return "Select Antenna type for " + mote;
+    }
+
+    @Override
+    public void doAction(Visualizer visualizer, Mote mote) {
+	String number = JOptionPane.showInputDialog("Select Antenna (0-Omni, 1-Directional)");
+	int value = Integer.parseInt(number);
+      mote.getInterfaces().getDirection().setAntennaType(value);
     }
   };
 

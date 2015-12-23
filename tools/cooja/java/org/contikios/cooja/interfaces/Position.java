@@ -209,4 +209,8 @@ public class Position extends MoteInterface {
     setCoordinates(x, y, z);
   }
 
+  public String toString() {
+    return "Mote interface : Position";
+  }
+
 }

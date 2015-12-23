@@ -45,9 +45,11 @@ import org.contikios.cooja.contikimote.ContikiMote;
 import org.contikios.cooja.contikimote.ContikiMoteInterface;
 import org.contikios.cooja.interfaces.PolledAfterActiveTicks;
 import org.contikios.cooja.interfaces.Position;
+import org.contikios.cooja.interfaces.Direction;
 import org.contikios.cooja.interfaces.Radio;
 import org.contikios.cooja.mote.memory.VarMemory;
-import org.contikios.cooja.radiomediums.UDGM;
+import org.contikios.cooja.radiomediums.UDGM;	// Works with UDGM only???
+import org.contikios.cooja.radiomediums.ARM;
 
 /**
  * Packet radio transceiver mote interface.
@@ -195,7 +197,7 @@ public class ContikiRadio extends Radio implements ContikiMoteInterface, PolledA
   }
 
   public void signalReceptionEnd() {
-    if (isInterfered || packetToMote == null) {
+    if (isInterfered || packetToMote == null) {		// if is Interfered, discard packet
       isInterfered = false;
       packetToMote = null;
       myMoteMemory.setIntValueOf("simInSize", 0);
@@ -271,6 +273,10 @@ public class ContikiRadio extends Radio implements ContikiMoteInterface, PolledA
 
   public Position getPosition() {
     return mote.getInterfaces().getPosition();
+  }
+
+  public Direction getDirection() {
+    return mote.getInterfaces().getDirection();
   }
 
   public void doActionsAfterTick() {

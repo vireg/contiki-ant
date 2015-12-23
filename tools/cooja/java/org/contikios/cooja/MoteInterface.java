@@ -153,4 +153,8 @@ public abstract class MoteInterface extends Observable {
   public void added() {
   }
 
+  public String toString() {
+    return "Mote interface : Null";
+  }
+
 }

@@ -30,6 +30,8 @@
 
 package org.contikios.cooja;
 
+import javax.swing.JOptionPane;
+
 import java.util.*;
 
 import org.apache.log4j.Logger;
@@ -63,6 +65,7 @@ public class MoteInterfaceHandler {
   private MoteID myMoteID;
   private PIR myPIR;
   private Position myPosition;
+  private Direction myDirection;
   private Radio myRadio;
   private PolledBeforeActiveTicks[] polledBeforeActive = null;
   private PolledAfterActiveTicks[] polledAfterActive = null;
@@ -83,11 +86,14 @@ public class MoteInterfaceHandler {
    */
   public MoteInterfaceHandler(Mote mote, Class<? extends MoteInterface>[] interfaceClasses) {
     for (Class<? extends MoteInterface> interfaceClass : interfaceClasses) {
+		//JOptionPane.showMessageDialog(null, "intf "+interfaceClass.toString(), "Title", JOptionPane.PLAIN_MESSAGE);
       MoteInterface intf = MoteInterface.generateInterface(interfaceClass, mote);
 
       if (intf != null) {
+		//JOptionPane.showMessageDialog(null, "Hi "+intf.toString(), "Title", JOptionPane.PLAIN_MESSAGE);
         addInterface(intf);
       } else {
+		//JOptionPane.showMessageDialog(null, "Fatal "+intf.toString(), "Title", JOptionPane.PLAIN_MESSAGE);
         logger.fatal("Could not load interface: " + interfaceClass);
       }
     }
@@ -255,8 +261,25 @@ public class MoteInterfaceHandler {
   public Position getPosition() {
     if (myPosition == null) {
       myPosition = getInterfaceOfType(Position.class);
+		//JOptionPane.showMessageDialog(null, "HiPos", "Title", JOptionPane.PLAIN_MESSAGE);
     }
     return myPosition;
+  }
+
+  /**
+   * Returns the direction interface (if any).
+   *
+   * @return Direction interface
+   */
+  public Direction getDirection() {
+    if (myDirection == null) {
+      myDirection = getInterfaceOfType(Direction.class);
+		//JOptionPane.showMessageDialog(null, "HiDir", "Title", JOptionPane.PLAIN_MESSAGE);
+    }
+    if (myDirection == null) {
+		//JOptionPane.showMessageDialog(null, "NoDir", "Title", JOptionPane.PLAIN_MESSAGE);
+    }
+    return myDirection;
   }
 
   /**
