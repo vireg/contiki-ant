@@ -36,6 +36,7 @@ import org.jdom.Element;
 import org.contikios.cooja.*;
 import org.contikios.cooja.interfaces.CustomDataRadio;
 import org.contikios.cooja.interfaces.Position;
+import org.contikios.cooja.interfaces.Direction;
 import org.contikios.cooja.interfaces.Radio;
 
 /**
@@ -269,6 +270,10 @@ public abstract class Radio802154 extends Radio implements CustomDataRadio {
     @Override
     public Position getPosition() {
         return mote.getInterfaces().getPosition();
+    }
+
+    public Direction getDir() {
+	return mote.getInterfaces().getDirection();
     }
 
     @Override

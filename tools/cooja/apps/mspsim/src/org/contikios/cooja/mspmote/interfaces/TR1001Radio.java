@@ -45,6 +45,7 @@ import org.contikios.cooja.Simulation;
 import org.contikios.cooja.TimeEvent;
 import org.contikios.cooja.interfaces.CustomDataRadio;
 import org.contikios.cooja.interfaces.Position;
+import org.contikios.cooja.interfaces.Direction;
 import org.contikios.cooja.interfaces.Radio;
 import org.contikios.cooja.mspmote.MspMote;
 import org.contikios.cooja.mspmote.MspMoteTimeEvent;
@@ -318,6 +319,10 @@ public class TR1001Radio extends Radio implements USARTListener, CustomDataRadio
 
   public Position getPosition() {
     return mote.getInterfaces().getPosition();
+  }
+
+  public Direction getDir() {
+    return mote.getInterfaces().getDirection();
   }
 
   private TimeEvent timeoutTransmission = new MoteTimeEvent(mote, 0) {
