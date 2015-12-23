@@ -103,10 +103,10 @@ public class UDGM extends AbstractRadioMedium {
         clearEdges();
         for (Radio source: UDGM.this.getRegisteredRadios()) {
           Position sourcePos = source.getPosition();
-	  Direction sourceDir = source.getDirection();
+	  Direction sourceDir = source.getDir();
           for (Radio dest: UDGM.this.getRegisteredRadios()) {
             Position destPos = dest.getPosition();
-            Direction destDir = dest.getDirection();
+            Direction destDir = dest.getDir();
             /* Ignore ourselves */
             if (source == dest) {
               continue;
@@ -223,8 +223,8 @@ public class UDGM extends AbstractRadioMedium {
 
       double distance = senderPos.getDistanceTo(recvPos);
 	double Ptx = sender.getCurrentOutputPower();
-	double Gtx = 20*Math.log10(sender.getDirection().getGain(recv.getPosition()));
-	double Grx = 20*Math.log10(recv.getDirection().getGain(sender.getPosition()));
+	double Gtx = 20*Math.log10(sender.getDir().getGain(recv.getPosition()));
+	double Grx = 20*Math.log10(recv.getDir().getGain(sender.getPosition()));
 	double PL = 20*Math.log10(distance);
         double signalStrength = Ptx + Gtx + Grx - PL;
       if (signalStrength >= RX_SENS) {	//(distance <= moteTransmissionRange) //Add antenna effects here
@@ -314,8 +314,8 @@ public class UDGM extends AbstractRadioMedium {
         double distFactor = dist/maxTxDist;	// dst Radio dist : maxTxDist
 
 	double Ptx = conn.getSource().getCurrentOutputPower();
-	double Gtx = 20*Math.log10(conn.getSource().getDirection().getGain(dstRadio.getPosition()));
-	double Grx = 20*Math.log10(dstRadio.getDirection().getGain(conn.getSource().getPosition()));
+	double Gtx = 20*Math.log10(conn.getSource().getDir().getGain(dstRadio.getPosition()));
+	double Grx = 20*Math.log10(dstRadio.getDir().getGain(conn.getSource().getPosition()));
 	double PL = 20*Math.log10(dist);
         double signalStrength = Ptx + Gtx + Grx - PL;		//SS_STRONG + distFactor*(SS_WEAK - SS_STRONG);	//Add antenna effects here
         if (dstRadio.getCurrentSignalStrength() < signalStrength) {
@@ -340,8 +340,8 @@ public class UDGM extends AbstractRadioMedium {
         double distFactor = dist/maxTxDist;	//intf radio dist : maxTxDist
 
 	double Ptx = conn.getSource().getCurrentOutputPower();
-	double Gtx = 20*Math.log10(conn.getSource().getDirection().getGain(intfRadio.getPosition()));	//intfRadio instead of dstRadio
-	double Grx = 20*Math.log10(intfRadio.getDirection().getGain(conn.getSource().getPosition()));	//intfRadio instead of dstRadio
+	double Gtx = 20*Math.log10(conn.getSource().getDir().getGain(intfRadio.getPosition()));	//intfRadio instead of dstRadio
+	double Grx = 20*Math.log10(intfRadio.getDir().getGain(conn.getSource().getPosition()));	//intfRadio instead of dstRadio
 	double PL = 20*Math.log10(dist);
         double signalStrength = Ptx + Gtx + Grx - PL; //SS_STRONG + distFactor*(SS_WEAK - SS_STRONG);	//Add antenna effects here
 
@@ -421,4 +421,3 @@ public class UDGM extends AbstractRadioMedium {
   }
 
 }
-

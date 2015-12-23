@@ -49,7 +49,7 @@ import org.contikios.cooja.interfaces.Direction;
 import org.contikios.cooja.interfaces.Radio;
 import org.contikios.cooja.mote.memory.VarMemory;
 import org.contikios.cooja.radiomediums.UDGM;	// Works with UDGM only???
-import org.contikios.cooja.radiomediums.ARM;
+//import org.contikios.cooja.radiomediums.ARM;
 
 /**
  * Packet radio transceiver mote interface.
@@ -275,7 +275,7 @@ public class ContikiRadio extends Radio implements ContikiMoteInterface, PolledA
     return mote.getInterfaces().getPosition();
   }
 
-  public Direction getDirection() {
+  public Direction getDir() {
     return mote.getInterfaces().getDirection();
   }
 

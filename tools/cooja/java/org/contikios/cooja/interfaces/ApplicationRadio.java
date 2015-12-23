@@ -419,6 +419,11 @@ public class ApplicationRadio extends Radio implements NoiseSourceRadio, Directi
   public double getDirection() {
     return 0;
   }
+
+  public Direction getDir() {
+    return mote.getInterfaces().getDirection();
+  }
+
   public double getRelativeGain(double radians, double distance) {
     /* Simple sinus-based gain */
     return 5.0*Math.sin(5.0*radians)/(0.01*distance);

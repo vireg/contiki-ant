@@ -223,7 +223,7 @@ public abstract class Radio extends MoteInterface {
    *
    * @return Radio direction
    */
-  public abstract Direction getDirection();
+  public abstract Direction getDir();
 
   /**
    * This is a convenience function.

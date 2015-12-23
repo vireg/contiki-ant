@@ -124,7 +124,7 @@ import org.contikios.cooja.plugins.skins.PositionVisualizerSkin;
 import org.contikios.cooja.plugins.skins.DirectionVisualizerSkin;
 import org.contikios.cooja.plugins.skins.TrafficVisualizerSkin;
 import org.contikios.cooja.plugins.skins.UDGMVisualizerSkin;
-import org.contikios.cooja.plugins.skins.ARMVisualizerSkin;
+//import org.contikios.cooja.plugins.skins.ARMVisualizerSkin;
 
 /**
  * Simulation visualizer supporting different visualizers
