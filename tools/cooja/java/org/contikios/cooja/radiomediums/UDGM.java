@@ -87,7 +87,10 @@ public class UDGM extends AbstractRadioMedium {
   public double SUCCESS_RATIO_RX = 1.0; /* Success ratio of RX. If this fails, the single affected receiver does not receive the packet */
   public double TRANSMITTING_RANGE = 50; /* Transmission range. */
   public double INTERFERENCE_RANGE = 100; /* Interference range. Ignored if below transmission range. */
-  public double RX_SENS = -35;
+  public double RX_SENS = -95;
+  public double INTF_TH = -100;
+  private double freq = 2.4;
+  private double c_speed = 299792458;
 
   private DirectedGraphMedium dgrm; /* Used only for efficient destination lookup */
 
@@ -225,7 +228,7 @@ public class UDGM extends AbstractRadioMedium {
 	double Ptx = sender.getCurrentOutputPower();
 	double Gtx = 20*Math.log10(sender.getDir().getGain(recv.getPosition()));
 	double Grx = 20*Math.log10(recv.getDir().getGain(sender.getPosition()));
-	double PL = 20*Math.log10(distance);
+	double PL = 20*Math.log10(distance) + 20*Math.log10(freq) + 180 + 20*Math.log10(4*Math.PI/c_speed); //2.4GHz: 20*log(2.4) + 20*log(10^9)
         double signalStrength = Ptx + Gtx + Grx - PL;
       if (signalStrength >= RX_SENS) {	//(distance <= moteTransmissionRange) //Add antenna effects here
         /* Within transmission range */
@@ -254,7 +257,7 @@ public class UDGM extends AbstractRadioMedium {
           /* Success: radio starts receiving */
           newConnection.addDestination(recv);
         }
-      } else if (signalStrength >= -75.0 && signalStrength < RX_SENS) {	//Add antenna effects here
+      } else if (signalStrength >= INTF_TH && signalStrength < RX_SENS) {	//Add antenna effects here
         /* Within interference range */
         newConnection.addInterfered(recv);
         recv.interfereAnyReception();
@@ -316,7 +319,7 @@ public class UDGM extends AbstractRadioMedium {
 	double Ptx = conn.getSource().getCurrentOutputPower();
 	double Gtx = 20*Math.log10(conn.getSource().getDir().getGain(dstRadio.getPosition()));
 	double Grx = 20*Math.log10(dstRadio.getDir().getGain(conn.getSource().getPosition()));
-	double PL = 20*Math.log10(dist);
+	double PL = 20*Math.log10(dist) + 20*Math.log10(freq) + 180 + 20*Math.log10(4*Math.PI/c_speed); //2.4GHz: 20*log(2.4) + 20*log(10^9)
         double signalStrength = Ptx + Gtx + Grx - PL;		//SS_STRONG + distFactor*(SS_WEAK - SS_STRONG);	//Add antenna effects here
         if (dstRadio.getCurrentSignalStrength() < signalStrength) {
           dstRadio.setCurrentSignalStrength(signalStrength);
@@ -342,7 +345,7 @@ public class UDGM extends AbstractRadioMedium {
 	double Ptx = conn.getSource().getCurrentOutputPower();
 	double Gtx = 20*Math.log10(conn.getSource().getDir().getGain(intfRadio.getPosition()));	//intfRadio instead of dstRadio
 	double Grx = 20*Math.log10(intfRadio.getDir().getGain(conn.getSource().getPosition()));	//intfRadio instead of dstRadio
-	double PL = 20*Math.log10(dist);
+	double PL = 20*Math.log10(dist) + 20*Math.log10(freq) + 180 + 20*Math.log10(4*Math.PI/c_speed); //2.4GHz: 20*log(2.4) + 20*log(10^9)
         double signalStrength = Ptx + Gtx + Grx - PL; //SS_STRONG + distFactor*(SS_WEAK - SS_STRONG);	//Add antenna effects here
 
         //if (distFactor < 1) {	// intf radio within Tx range

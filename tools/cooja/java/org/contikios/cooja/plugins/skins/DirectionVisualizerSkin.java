@@ -53,7 +53,7 @@ import org.contikios.cooja.plugins.VisualizerSkin;
  *
  * Paints the three dimensional mote direction on the right-hand side of the mote.
  *
- * @author Fredrik Osterlind
+ * @author Vishwesh Rege
  */
 @ClassDescription("Directions")
 public class DirectionVisualizerSkin implements VisualizerSkin {

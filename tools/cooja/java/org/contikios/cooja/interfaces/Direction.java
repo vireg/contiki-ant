@@ -60,7 +60,7 @@ public class Direction extends MoteInterface {
   public Direction(Mote mote) {
     this.mote = mote;
 
-    beamwidthDegrees = 180.0;
+    beamwidthDegrees = 90.0;
     orientationDegrees = 0.0;
     omni = true;
   }
